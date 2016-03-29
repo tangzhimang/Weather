@@ -59,8 +59,25 @@ public class CoolWeatherDB {
 
     public void saveCity(City city) {
         if(city != null) {
-            db.execSQL("insert into P");
+            db.execSQL("insert into City(city_name,city_code,province_id) values (?,?,?)",new Object[]{city.getCityName(),city.getCityCode(),city.getProvinceId()});
         }
+    }
+
+    public List<City> loadCitys() {
+        List<City> list = new ArrayList<City>();
+        Cursor cursor = db.rawQuery("select * from City",null);
+        if(cursor.moveToFirst()) {
+            do {
+              City city = new City();
+                city.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
+                city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
+                city.setProvinceId(cursor.getInt(cursor.getColumnIndex("province_id")));
+                list.add(city);
+
+            } while(cursor.moveToNext());
+        }
+        return list;
     }
 
 

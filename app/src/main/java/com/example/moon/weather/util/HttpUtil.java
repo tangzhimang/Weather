@@ -11,7 +11,7 @@ import java.net.URLEncoder;
  * Created by Administrator on 2016/3/28.
  */
 public class HttpUtil {
-    public static void sendHttpGetRequest (final String address,final String params,final HttpCallbackListener listener) {
+    public static void sendHttpGetRequest (final String address,final HttpCallbackListener listener) {
 
         new Thread(new Runnable() {
             @Override
@@ -19,8 +19,7 @@ public class HttpUtil {
                 HttpURLConnection connection = null;
 
                 try {
-                    params.trim();
-                    URL url1 = new URL(address+"?"+ URLEncoder.encode(params, "UTF-8"));
+                    URL url1 = new URL(address);
                     connection = (HttpURLConnection) url1.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
