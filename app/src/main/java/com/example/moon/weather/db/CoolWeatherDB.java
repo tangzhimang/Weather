@@ -16,7 +16,7 @@ import java.util.List;
 public class CoolWeatherDB {
 
     public static final String DB_NAME = "cool_weather";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private static CoolWeatherDB coolWeatherDB;
     private SQLiteDatabase db;
@@ -63,9 +63,9 @@ public class CoolWeatherDB {
         }
     }
 
-    public List<City> loadCitys() {
+    public List<City> loadCitys(int select_province_id) {
         List<City> list = new ArrayList<City>();
-        Cursor cursor = db.rawQuery("select * from City",null);
+        Cursor cursor = db.rawQuery("select * from City where province_id = ?",new String[]{String.valueOf(select_province_id)});
         if(cursor.moveToFirst()) {
             do {
               City city = new City();

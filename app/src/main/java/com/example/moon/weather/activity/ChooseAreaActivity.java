@@ -2,6 +2,7 @@ package com.example.moon.weather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -71,9 +72,46 @@ public class ChooseAreaActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                if(currentLEVEL == LEVEL_PROVINCE) {
+                    selectProvince = provinceList.get(position);
+                    queryCity();
+                } else if(currentLEVEL == LEVEL_CITY) {
+                    selectCity = cityList.get(position);
+                    Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+                    intent.putExtra("county_code",selectCity.getCityCode());
+                    startActivity(intent);
+                    finish();
+                }
+
             }
         });
         queryProvinces();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(currentLEVEL == LEVEL_CITY) {
+            queryProvinces();
+        } else {
+            finish();
+        }
+
+    }
+
+    private void queryCity() {
+        cityList = coolWeatherDB.loadCitys(selectProvince.getId());
+        if(cityList.size()>0) {
+            dataList.clear();
+            for(City city:cityList) {
+                dataList.add(city.getCityName());
+            }
+            adapter.notifyDataSetChanged();
+            listView.setSelection(0);
+            textView.setText(selectProvince.getProvinceName());
+            currentLEVEL = LEVEL_CITY;
+        }
+
+
     }
 
     private void queryProvinces() {
@@ -118,6 +156,7 @@ public class ChooseAreaActivity extends Activity {
                         closeProgressDialog();
                         Toast.makeText(ChooseAreaActivity.this,
                                 "加载完成", Toast.LENGTH_SHORT).show();
+                        adapter.notifyDataSetChanged();
                     }
                 });
 
@@ -141,7 +180,7 @@ public class ChooseAreaActivity extends Activity {
     private void insertSQLite(JsonResult jsonResult) {
 
         List<JsonResult.City_Info> city_infoList = jsonResult.getCity_info();
-        int i=1;
+        int i=0;
         String currentProvince = " ";
         for(JsonResult.City_Info city_info:city_infoList) {
             if(!city_info.getProv().equals(currentProvince)) {
