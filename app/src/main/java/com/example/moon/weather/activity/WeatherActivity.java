@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -12,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.moon.weather.R;
+import com.example.moon.weather.util.HttpCallbackListener;
+import com.example.moon.weather.util.HttpUtil;
 
 public class WeatherActivity extends Activity implements DialogInterface.OnClickListener {
 
@@ -69,7 +72,19 @@ public class WeatherActivity extends Activity implements DialogInterface.OnClick
     }
 
     private void queryWeather(String countyCode) {
-        String address = "https://api.heweather.com/x3/weather?cityid=CN101281104&key=a2f3cf596694476ab96a29fd66a95ddc";
+        String address = "https://api.heweather.com/x3/weather?cityid="+countyCode+"&key=a2f3cf596694476ab96a29fd66a95ddc";
+        HttpUtil.sendHttpGetRequest(address, new HttpCallbackListener() {
+            @Override
+            public void onFinish(String response) {
+                response=response.substring(31,response.length()-2);
+                Log.d("测试",response);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d("测试错误",e.toString());
+            }
+        });
     }
 
     @Override
