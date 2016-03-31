@@ -13,8 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.moon.weather.R;
+import com.example.moon.weather.model.WeatherJsonResult;
 import com.example.moon.weather.util.HttpCallbackListener;
 import com.example.moon.weather.util.HttpUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class WeatherActivity extends Activity implements DialogInterface.OnClickListener {
 
@@ -77,7 +80,17 @@ public class WeatherActivity extends Activity implements DialogInterface.OnClick
             @Override
             public void onFinish(String response) {
                 response=response.substring(31,response.length()-2);
-                Log.d("测试",response);
+                //Log.d("测试",response);
+
+                try {
+                    Gson gson = new Gson();
+                    WeatherJsonResult weatherJsonResult = gson.fromJson(response,WeatherJsonResult.class);
+                    Log.d("json测试",weatherJsonResult.getStatus());
+                } catch (JsonSyntaxException e) {
+                    Log.d("json解析错误",e.toString());
+                    e.printStackTrace();
+
+                }
             }
 
             @Override
