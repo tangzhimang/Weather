@@ -7,12 +7,12 @@ import java.util.List;
  */
 public class WeatherJsonResult {
 
-    private Basic basic;
-    private List<Daily_forecast> daily_forecast;
-    private List<Hourly_forecast> hourly_forecast;
-    private Now now;
-    private String status;
-    private Suggestion suggestion;
+//    private Basic basic;
+//    private List<Daily_forecast> daily_forecast;
+//    private List<Hourly_forecast> hourly_forecast;
+//    private Now now;
+//    private String status;
+//    private Suggestion suggestion;
 
 
 //    public static class Now {
