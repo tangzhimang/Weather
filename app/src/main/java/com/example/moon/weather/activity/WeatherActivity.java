@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.moon.weather.Bean.WeatherBean;
 import com.example.moon.weather.R;
 import com.example.moon.weather.model.WeatherJsonResult;
+import com.example.moon.weather.service.AutoUpdateService;
 import com.example.moon.weather.util.HttpCallbackListener;
 import com.example.moon.weather.util.HttpUtil;
 import com.example.moon.weather.util.Utility;
@@ -127,9 +128,11 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         temp2Text.setText(preferences.getInt("temp2", 0)+"℃");
         weatherDespText.setText(preferences.getString("weather_desp", ""));
         publishText.setText(preferences.getString("public_time","")+"发布");
-        currentDateText.setText(preferences.getString("current_date",""));
+        currentDateText.setText(preferences.getString("current_date", ""));
         cityNameText.setVisibility(View.VISIBLE);
         weatherInfoLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 
     @Override
@@ -137,14 +140,22 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case  R.id.switch_city: {
                 Intent intent = new Intent(WeatherActivity.this,ChooseAreaActivity.class);
-                intent.putExtra("Refresh_Weather_Activity",true);
+                intent.putExtra("is_from_Weather_Activity",true);
                 startActivity(intent);
                 finish();
 
                 break;
             }
             case R.id.refresh_weather: {
-
+                publishText.setText("同步中");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String city_code = sharedPreferences.getString("city_code", "");
+                if(!TextUtils.isEmpty(city_code)) {
+                    queryWeather(city_code);
+                    Log.d("刷新", "刷新成功");
+                } else {
+                    Log.d("刷新","刷新失败");
+                }
                 break;
             }
         }

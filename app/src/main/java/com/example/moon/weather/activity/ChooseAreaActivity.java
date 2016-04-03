@@ -3,7 +3,9 @@ package com.example.moon.weather.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -56,9 +58,19 @@ public class ChooseAreaActivity extends Activity {
 
     private int currentLEVEL;
 
+    private boolean isfromWeatherActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isfromWeatherActivity = getIntent().getBooleanExtra("is_from_Weather_Activity",false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(sharedPreferences.getBoolean("city_selected",false)&&!isfromWeatherActivity) {
+            Intent intent = new Intent(this,WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
         listView = (ListView) findViewById(R.id.list_view);
@@ -93,6 +105,10 @@ public class ChooseAreaActivity extends Activity {
         if(currentLEVEL == LEVEL_CITY) {
             queryProvinces();
         } else {
+            if(isfromWeatherActivity) {
+                Intent intent = new Intent(this,WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
 

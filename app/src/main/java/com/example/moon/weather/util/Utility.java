@@ -22,14 +22,16 @@ public class Utility {
         List<Daily_forecast> daily_forecastList = weatherBean.getDaily_forecast();
         Daily_forecast daily_forecast1 = daily_forecastList.get(0);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年m月d日", Locale.CHINA);
-        editor.putBoolean("city_selected",true);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年M月d日", Locale.CHINA);
+        editor.putBoolean("city_selected", true);
         editor.putString("current_date", simpleDateFormat.format(new Date()));
         editor.putString("city_name", weatherBean.getBasic().getCity());
-        editor.putString("weather_desp",daily_forecast1.getCond().getTxt_d()+ "到"+ daily_forecast1.getCond().getTxt_n());
+        editor.putString("weather_desp", daily_forecast1.getCond().getTxt_d() + "到" + daily_forecast1.getCond().getTxt_n());
         editor.putInt("temp1",daily_forecast1.getTmp().getMin());
-        editor.putInt("temp2",daily_forecast1.getTmp().getMax());
+        editor.putInt("temp2", daily_forecast1.getTmp().getMax());
+        editor.putString("city_code",weatherBean.getBasic().getId());
         editor.putString("public_time",weatherBean.getBasic().getUpdate().getLoc());
+
         editor.commit();
 
     }
