@@ -125,6 +125,9 @@ public class ChooseAreaActivity extends Activity {
             listView.setSelection(0);
             textView.setText(selectProvince.getProvinceName());
             currentLEVEL = LEVEL_CITY;
+        } else {
+            currentLEVEL = LEVEL_CITY;
+            queryFromServer(selectProvince.getProvinceName());
         }
 
 
@@ -147,7 +150,7 @@ public class ChooseAreaActivity extends Activity {
         }
     }
 
-    private void queryFromServer( String province) {
+    private void queryFromServer( final String province) {
         showProgressDialog();
         HttpUtil.sendHttpGetRequest(WEB_ADDRESS, new HttpCallbackListener() {
             @Override
@@ -155,7 +158,11 @@ public class ChooseAreaActivity extends Activity {
                 //Log.d("读取测试",response);
                 Gson gson = new Gson();
                 JsonResult jsonResult = gson.fromJson(response, JsonResult.class);
-                insertSQLite(jsonResult);
+                if(province.equals("province")) {
+                    insertSQLiteProvince(jsonResult);
+                } else {
+                    insertSQLiteCity(jsonResult);
+                }
 //                Log.d("读取测试", jsonResult.getStatus());
 //
 //                List<JsonResult.City_Info> city_infoList = jsonResult.getCity_info();
@@ -172,7 +179,12 @@ public class ChooseAreaActivity extends Activity {
                         closeProgressDialog();
                         Toast.makeText(ChooseAreaActivity.this,
                                 "加载完成", Toast.LENGTH_SHORT).show();
-                        adapter.notifyDataSetChanged();
+                        if(currentLEVEL == LEVEL_PROVINCE) {
+                            queryProvinces();
+                        } else {
+                            queryCity();
+                        }
+
                     }
                 });
 
@@ -193,7 +205,30 @@ public class ChooseAreaActivity extends Activity {
         });
     }
 
-    private void insertSQLite(JsonResult jsonResult) {
+    private void insertSQLiteCity(JsonResult jsonResult) {
+
+        List<JsonResult.City_Info> city_infoList = jsonResult.getCity_info();
+        int i=0;
+        String currentProvince = " ";
+        for(JsonResult.City_Info city_info:city_infoList) {
+            if(!city_info.getProv().equals(currentProvince)) {
+                currentProvince = city_info.getProv();
+
+
+                i++;
+            }
+            if(city_info.getProv().equals(selectProvince.getProvinceName())) {
+                 City city = new City();
+                 city.setCityName(city_info.getCity());
+                 city.setCityCode(city_info.getId());
+                 city.setProvinceId(i);
+                 coolWeatherDB.saveCity(city);
+                //Log.d("读取测试",city_info.getCity()+"       "+city_info.getProv());
+            }
+        }
+    }
+
+    private void insertSQLiteProvince(JsonResult jsonResult) {
 
         List<JsonResult.City_Info> city_infoList = jsonResult.getCity_info();
         int i=0;
@@ -208,12 +243,12 @@ public class ChooseAreaActivity extends Activity {
                 coolWeatherDB.saveProvince(province);
                 i++;
             }
-            City city = new City();
-            city.setCityName(city_info.getCity());
-            city.setCityCode(city_info.getId());
-            city.setProvinceId(i);
-            coolWeatherDB.saveCity(city);
-                    //Log.d("读取测试",city_info.getCity()+"       "+city_info.getProv());
+//            City city = new City();
+//            city.setCityName(city_info.getCity());
+//            city.setCityCode(city_info.getId());
+//            city.setProvinceId(i);
+//            coolWeatherDB.saveCity(city);
+            //Log.d("读取测试",city_info.getCity()+"       "+city_info.getProv());
 
         }
     }

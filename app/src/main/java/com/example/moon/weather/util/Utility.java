@@ -26,10 +26,14 @@ public class Utility {
         editor.putBoolean("city_selected", true);
         editor.putString("current_date", simpleDateFormat.format(new Date()));
         editor.putString("city_name", weatherBean.getBasic().getCity());
-        editor.putString("weather_desp", daily_forecast1.getCond().getTxt_d() + "到" + daily_forecast1.getCond().getTxt_n());
+        if(!daily_forecast1.getCond().getCode_d().equals(daily_forecast1.getCond().getCode_n())) {
+            editor.putString("weather_desp", daily_forecast1.getCond().getTxt_d() + "到" + daily_forecast1.getCond().getTxt_n());
+        }else {
+            editor.putString("weather_desp",daily_forecast1.getCond().getTxt_d());
+        }
         editor.putInt("temp1",daily_forecast1.getTmp().getMin());
         editor.putInt("temp2", daily_forecast1.getTmp().getMax());
-        editor.putString("city_code",weatherBean.getBasic().getId());
+        editor.putString("city_code", weatherBean.getBasic().getId());
         editor.putString("public_time",weatherBean.getBasic().getUpdate().getLoc());
 
         editor.commit();
